@@ -1,0 +1,1405 @@
+major_version: "local"
+minor_version: ""
+default_target_cpu: "same_as_host"
+
+
+default_toolchain {
+  cpu: "darwin"
+  toolchain_identifier: "darwin"
+}
+
+default_toolchain {
+  cpu: "ios_x86_64"
+  toolchain_identifier: "ios_x86_64"
+}
+
+default_toolchain {
+  cpu: "ios_i386"
+  toolchain_identifier: "ios_i386"
+}
+
+default_toolchain {
+  cpu: "ios_armv6"
+  toolchain_identifier: "ios_armv6"
+}
+
+default_toolchain {
+  cpu: "ios_arm64"
+  toolchain_identifier: "ios_arm64"
+}
+
+default_toolchain {
+  cpu: "ios_armv7"
+  toolchain_identifier: "ios_armv7"
+}
+
+default_toolchain {
+  cpu: "ios_armv7s"
+  toolchain_identifier: "ios_armv7s"
+}
+
+default_toolchain {
+  cpu: "watchos_i386"
+  toolchain_identifier: "watchos_i386"
+}
+
+default_toolchain {
+  cpu: "watchos_armv7k"
+  toolchain_identifier: "watchos_armv7k"
+}
+
+default_toolchain {
+  cpu: "tvos_x86_64"
+  toolchain_identifier: "tvos_x86_64"
+}
+
+default_toolchain {
+  cpu: "tvos_arm64"
+  toolchain_identifier: "tvos_arm64"
+}
+
+
+
+toolchain {
+  toolchain_identifier: "darwin"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "darwin"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "x86_64"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-mmacosx-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_OSX"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}
+
+toolchain {
+  toolchain_identifier: "ios_x86_64"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "ios_x86_64"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "x86_64"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-miphonesimulator-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.2.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.2.sdk/System/Library/Frameworks"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.2.sdk/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_IOS"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}
+
+toolchain {
+  toolchain_identifier: "ios_i386"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "ios_i386"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "i386"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-miphonesimulator-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.2.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.2.sdk/System/Library/Frameworks"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.2.sdk/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_IOS"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}
+
+toolchain {
+  toolchain_identifier: "ios_armv6"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "ios_armv6"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "armv6"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-miphoneos-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/System/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_IOS"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}
+
+toolchain {
+  toolchain_identifier: "ios_arm64"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "ios_arm64"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "arm64"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-miphoneos-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/System/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_IOS"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}
+
+toolchain {
+  toolchain_identifier: "ios_armv7"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "ios_armv7"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "armv7"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-miphoneos-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/System/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_IOS"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}
+
+toolchain {
+  toolchain_identifier: "ios_armv7s"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "ios_armv7s"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "armv7s"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-miphoneos-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/System/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_IOS"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}
+
+toolchain {
+  toolchain_identifier: "watchos_i386"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "watchos_i386"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "i386"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-mwatchsimulator-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator3.1.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator3.1.sdk/System/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_WATCHOS"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}
+
+toolchain {
+  toolchain_identifier: "watchos_armv7k"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "watchos_armv7k"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "armv7k"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-mwatchos-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.1.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.1.sdk/System/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_WATCHOS"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}
+
+toolchain {
+  toolchain_identifier: "tvos_x86_64"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "tvos_x86_64"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "x86_64"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-mappletvsimulator-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/AppleTVSimulator.platform/Developer/SDKs/AppleTVSimulator10.1.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/AppleTVSimulator.platform/Developer/SDKs/AppleTVSimulator10.1.sdk/System/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_TVOS"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}
+
+toolchain {
+  toolchain_identifier: "tvos_arm64"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "tvos_arm64"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "arm64"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # TODO: Hardcode these for now, but get them from bazel.
+  action_config {
+   config_name: 'c++-compile'
+   action_name: 'c++-compile'
+     tool {
+       tool_path: 'cc-xcwrapper.sh'
+     }
+     flag_set {
+       flag_group {
+         flag: "-mappletvos-version-min=%{version_min}"
+       }
+       flag_group {
+         # We need a way to get the bitcode setting from the bazel flag.
+         # Afaict, this needs to be exposed in AppleCcToolchain.java.
+        flag: "-fembed-bitcode-marker"
+       }
+     }
+  }
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.1.sdk/usr/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.1.sdk/System/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # OS Definition.
+  compiler_flag: "-DOS_TVOS"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}

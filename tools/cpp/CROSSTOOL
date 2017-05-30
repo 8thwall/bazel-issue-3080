@@ -1,0 +1,113 @@
+major_version: "local"
+minor_version: ""
+default_target_cpu: "same_as_host"
+
+
+default_toolchain {
+  cpu: "darwin"
+  toolchain_identifier: "darwin"
+}
+
+
+
+toolchain {
+  toolchain_identifier: "darwin"
+  abi_libc_version: "local"
+  abi_version: "local"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "local"
+  target_system_name: "local"
+  target_cpu: "darwin"
+  target_libc: "macosx"
+  needsPic: true
+  supports_fission: false
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+
+  tool_path {name: "ar" path: "libtool-xcwrapper.sh" }
+  tool_path {name: "cpp" path: "/usr/bin/cpp" }
+  tool_path {name: "dwp" path: "/usr/bin/dwp" }
+  tool_path {name: "gcc" path: "cc-xcwrapper.sh" }
+  tool_path {name: "gcov" path: "/usr/bin/gcov" }
+  tool_path {name: "ld" path: "/usr/bin/ld" }
+  tool_path {name: "nm" path: "/usr/bin/nm" }
+  tool_path {name: "objcopy" path: "/usr/bin/objcopy" }
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+  tool_path {name: "objdump" path: "/usr/bin/objdump" }
+  tool_path {name: "strip" path: "/usr/bin/strip" }
+
+  # Static link flags.
+  ar_flag: "-static"
+  ar_flag: "-s"
+  ar_flag: "-o"
+
+  # Make C++ compilation deterministic. Use linkstamping instead of these
+  # compiler symbols.
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  # Select the target architecture.
+  compiler_flag: "-arch"
+  compiler_flag: "x86_64"
+
+  # Use libc++ for standary library.
+  compiler_flag: "-stdlib=libc++"
+
+  # Security hardening. We need to undef it before redefining it as some
+  # distributions now have it enabled by default.
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+
+  # All warnings are enabled.
+  compiler_flag: "-Wall"
+  # Enable additional warnings not part of -Wall.
+  compiler_flag: "-Wthread-safety"
+  compiler_flag: "-Wself-assign"
+
+  # Keep stack frames for debugging, even in opt mode.
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  # Enable coloring.
+  compiler_flag: "-fcolor-diagnostics"
+
+  # C++ built-in includes.
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+  cxx_builtin_include_directory: "/usr/local/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include"
+  cxx_builtin_include_directory: "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+  cxx_builtin_include_directory: "/usr/include"
+  cxx_builtin_include_directory: "/System/Library/Frameworks"
+  cxx_builtin_include_directory: "/Library/Frameworks"
+
+  # C++ version.
+  cxx_flag: "-std=c++14"
+
+  # Dynamic link flags.
+  linker_flag: "-lc++"
+  linker_flag: "-lm"
+  linker_flag: "-undefined"
+  linker_flag: "dynamic_lookup"
+  linker_flag: "-headerpad_max_install_names"
+
+  compilation_mode_flags {
+    mode: DBG
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+    compiler_flag: "-g0"
+    compiler_flag: "-O2"
+    compiler_flag: "-DNDEBUG"
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+}

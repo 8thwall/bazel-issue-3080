@@ -1,0 +1,1 @@
+build --crosstool_top=//tools/cpp:toolchain --apple_crosstool_top=//tools/objc:toolchain --experimental_enable_objc_cc_deps --ios_multi_cpus=arm64 --ios_minimum_os=9.0 --apple_bitcode=embedded_markers
