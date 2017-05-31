@@ -127,7 +127,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
@@ -249,7 +287,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
@@ -372,7 +448,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
@@ -495,7 +609,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
@@ -617,7 +769,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
@@ -739,7 +929,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
@@ -861,7 +1089,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
@@ -983,7 +1249,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
@@ -1105,7 +1409,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
@@ -1227,7 +1569,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
@@ -1349,7 +1729,45 @@ toolchain {
         flag: "-fembed-bitcode-marker"
        }
      }
+     implies: "apple_env"
   }
+
+  feature {
+     name: "apple_env"
+     env_set {
+       action: "c-compile"
+       action: "c++-compile"
+       action: "c++-module-compile"
+       action: "c++-header-parsing"
+       action: "c++-header-preprocessing"
+       action: "assemble"
+       action: "preprocess-assemble"
+       action: "objc-compile"
+       action: "objc++-compile"
+       action: "objc-archive"
+       action: "c++-link-executable"
+       action: "c++-link-dynamic-library"
+       action: "c++-link-static-library"
+       action: "c++-link-alwayslink-static-library"
+       action: "c++-link-pic-static-library"
+       action: "c++-link-alwayslink-pic-static-library"
+       action: "objc-executable"
+       action: "objc++-executable"
+       env_entry {
+         key: "XCODE_VERSION_OVERRIDE"
+         value: "%{xcode_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_VERSION_OVERRIDE"
+         value: "%{apple_sdk_version_override_value}"
+       }
+       env_entry {
+         key: "APPLE_SDK_PLATFORM"
+         value: "%{apple_sdk_platform_value}"
+       }
+     }
+   }
+
 
   # Security hardening. We need to undef it before redefining it as some
   # distributions now have it enabled by default.
